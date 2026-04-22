@@ -1,11 +1,1824 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus</title>
-    </head>
-    <body>
-        PakePlus
-    </body>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口腔对食物消化作用实验 - 三实验并行版</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一的 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E88E5',    // 科学蓝
+                        secondary: '#4CAF50',  // 清新绿
+                        accent: '#FF9800',     // 活力橙
+                        neutral: '#F5F5F5',    // 中性灰
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.5s ease-in-out',
+                        'fade-out': 'fadeOut 10s ease-in-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1' },
+                            '100%': { opacity: '0' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .glass {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+        }
+        
+        /* 自定义样式 */
+        .beaker {
+            position: relative;
+            width: 100px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 5px 5px 20px 20px;
+            border: 3px solid #e0e0e0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .beaker::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+        }
+        
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: rgba(30, 136, 229, 0.2);
+            transition: all 1s ease;
+        }
+        
+        .liquid-saliva {
+            background: rgba(30, 136, 229, 0.3);
+        }
+        
+        .liquid-water {
+            background: rgba(30, 136, 229, 0.1);
+        }
+        
+        .liquid-iodine {
+            background: rgba(34, 197, 94, 0.2);
+        }
+        
+        .liquid-iodine-reacted {
+            background: rgba(34, 197, 94, 0.4);
+        }
+        
+        .bread {
+            position: absolute;
+            bottom: 0%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            background: #FBBF24;
+            border-radius: 3px;
+            transition: all 1s ease;
+            z-index: 1;
+        }
+        
+        .bread-whole {
+            width: 50px;
+            height: 25px;
+            background: linear-gradient(to bottom, #FBBF24, #F59E0B);
+        }
+        
+        .bread-crushed {
+            width: 60px;
+            height: 15px;
+            background: linear-gradient(to bottom, #FBBF24, #F59E0B);
+            opacity: 0.8;
+        }
+        
+        .pipette {
+            position: absolute;
+            width: 8px;
+            height: 80px;
+            background: #e0e0e0;
+            border-radius: 4px 4px 0 0;
+            top: -64px;
+            left: 46px;
+            transform-origin: bottom;
+            transition: all 0.5s ease;
+            z-index: 10;
+        }
+        
+        .pipette::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: -6px;
+            width: 20px;
+            height: 20px;
+            background: rgba(34, 197, 94, 0.6);
+            border-radius: 50%;
+        }
+        
+        .pipette::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -11px;
+            width: 30px;
+            height: 15px;
+            background: #e0e0e0;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        /* 动画效果 */
+        @keyframes breadDisappear {
+            0% { opacity: 1; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0.3; transform: translateX(-50%) scale(0.7); }
+        }
+        
+        @keyframes breadShrink {
+            0% { width: 50px; height: 25px; }
+            100% { width: 35px; height: 15px; }
+        }
+        
+        @keyframes liquidBubble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .bread-disappear {
+            animation: breadDisappear 3s ease-out forwards;
+        }
+        
+        .bread-shrink {
+            animation: breadShrink 3s ease-out forwards;
+        }
+        
+        .liquid-bubble {
+            animation: liquidBubble 2s ease-in-out infinite;
+        }
+        
+        .loading-text {
+            animation: fadeOut 10s ease-in-out forwards;
+        }
+        
+        /* 实验卡片样式 */
+        .experiment-card {
+            transition: all 0.3s ease;
+        }
+        
+        .experiment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 步骤指示器 */
+        .step-indicator {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        
+        .step div {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .step span {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active div {
+            background-color: #1E88E5;
+            color: white;
+        }
+        
+        .step.active span {
+            color: #1E88E5;
+            font-weight: 500;
+        }
+        
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 0;
+        }
+        
+        .step.active:not(:last-child)::after {
+            background-color: #1E88E5;
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 1rem;
+            flex: 1;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #1E88E5;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fa fa-flask text-primary text-3xl mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">口腔对食物消化作用实验</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="helpBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all-300 flex items-center">
+                        <i class="fa fa-question-circle mr-2"></i>
+                        实验帮助
+                    </button>
+                    <button id="resetBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all-300 flex items-center">
+                        <i class="fa fa-refresh mr-2"></i>
+                        重置实验
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <!-- 实验原理说明 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 glass">
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                <i class="fa fa-lightbulb-o mr-2"></i>
+                实验原理
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-700 mb-4">
+                        馒头的主要成分是淀粉。唾液中含有<span class="font-semibold text-primary">淀粉酶</span>，可以将淀粉分解为麦芽糖。淀粉遇碘会变<span class="font-semibold text-blue-600">蓝色</span>，而麦芽糖不会。通过这个特性，我们可以用碘液来检验淀粉是否被消化。
+                    </p>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h3 class="font-semibold text-blue-800 mb-2">实验变量</h3>
+                        <ul class="list-disc pl-5 text-blue-700 space-y-1">
+                            <li><strong>馒头处理方式</strong>：整块馒头 vs 切碎馒头</li>
+                            <li><strong>添加液体</strong>：清水 vs 唾液</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-gray-800 mb-3">预期结果</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-blue-600 mr-3"></div>
+                            <span class="text-gray-700">添加清水：淀粉未被消化，滴加碘液后变蓝</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-green-500 mr-3"></div>
+                            <span class="text-gray-700">添加唾液+整块馒头：部分淀粉被消化，滴加碘液后变浅蓝色</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-green-300 mr-3"></div>
+                            <span class="text-gray-700">添加唾液+切碎馒头：大部分淀粉被消化，滴加碘液后不变蓝</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 实验操作区 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <!-- 实验1 -->
+            <div class="experiment-card bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-primary text-white p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">实验 A</h3>
+                        <div id="exp1-status" class="px-2 py-1 bg-white/20 rounded-full text-xs font-medium">
+                            准备中
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- 步骤指示器 -->
+                    <div class="step-indicator mb-6">
+                        <div class="step active" data-step="1">
+                            <div>1</div>
+                            <span>准备材料</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div>2</div>
+                            <span>添加液体</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div>3</div>
+                            <span>等待反应</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div>4</div>
+                            <span>检验结果</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤1：选择馒头类型 -->
+                    <div id="exp1-step1" class="step-content">
+                        <p class="mb-6 text-gray-700 text-center">请选择馒头的处理方式：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="whole" data-experiment="1">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-whole"></div>
+                                </div>
+                                <p class="text-center font-medium">整块馒头</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="crushed" data-experiment="1">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-crushed"></div>
+                                </div>
+                                <p class="text-center font-medium">切碎馒头</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="exp1-step1Next" class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤2：添加液体 -->
+                    <div id="exp1-step2" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">请选择要添加的液体：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="water" data-experiment="1">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp1-previewBeaker2-water" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp1-previewBread2-water" class="bread"></div>
+                                        <div class="liquid liquid-water"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加清水</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="saliva" data-experiment="1">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp1-previewBeaker2-saliva" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp1-previewBread2-saliva" class="bread"></div>
+                                        <div class="liquid liquid-saliva"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加唾液</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp1-step2Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp1-step2Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤3：等待反应 -->
+                    <div id="exp1-step3" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">唾液中的淀粉酶需要时间分解淀粉，请等待反应进行。</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp1-reactionBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp1-reactionBread" class="bread"></div>
+                                <div id="exp1-reactionLiquid" class="liquid"></div>
+                            </div>
+                            
+                            <div id="exp1-loading" class="loading-text text-primary font-bold text-2xl opacity-100 transition-opacity duration-10000">十分钟</div>
+                            
+                            <p id="exp1-reactionStatus" class="mt-6 text-center text-gray-600">准备开始反应...</p>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp1-step3Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp1-step3Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤4：检验结果 -->
+                    <div id="exp1-step4" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">滴加碘液检验淀粉是否被消化：</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp1-resultBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp1-resultBread" class="bread"></div>
+                                <div id="exp1-resultLiquid" class="liquid"></div>
+                                <div id="exp1-pipette" class="pipette hidden" style="width: 8px; height: 80px; top: -64px; left: 36px;"></div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center">
+                                <button id="exp1-addIodineBtn" class="px-6 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent/90 transition-all-300 mb-4">
+                                    <i class="fa fa-flask mr-2"></i>
+                                    滴加碘液
+                                </button>
+                                
+                                <p id="exp1-resultStatus" class="text-center text-gray-600">点击上方按钮滴加碘液...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp1-step4Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp1-viewResultBtn" class="px-4 py-2 bg-secondary text-white rounded-lg font-medium hover:bg-secondary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                查看结果
+                                <i class="fa fa-check ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实验2 -->
+            <div class="experiment-card bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-primary text-white p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">实验 B</h3>
+                        <div id="exp2-status" class="px-2 py-1 bg-white/20 rounded-full text-xs font-medium">
+                            准备中
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- 步骤指示器 -->
+                    <div class="step-indicator mb-6">
+                        <div class="step active" data-step="1">
+                            <div>1</div>
+                            <span>准备材料</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div>2</div>
+                            <span>添加液体</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div>3</div>
+                            <span>等待反应</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div>4</div>
+                            <span>检验结果</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤1：选择馒头类型 -->
+                    <div id="exp2-step1" class="step-content">
+                        <p class="mb-6 text-gray-700 text-center">请选择馒头的处理方式：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="whole" data-experiment="2">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-whole"></div>
+                                </div>
+                                <p class="text-center font-medium">整块馒头</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="crushed" data-experiment="2">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-crushed"></div>
+                                </div>
+                                <p class="text-center font-medium">切碎馒头</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="exp2-step1Next" class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤2：添加液体 -->
+                    <div id="exp2-step2" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">请选择要添加的液体：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="water" data-experiment="2">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp2-previewBeaker2-water" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp2-previewBread2-water" class="bread"></div>
+                                        <div class="liquid liquid-water"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加清水</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="saliva" data-experiment="2">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp2-previewBeaker2-saliva" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp2-previewBread2-saliva" class="bread"></div>
+                                        <div class="liquid liquid-saliva"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加唾液</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp2-step2Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp2-step2Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤3：等待反应 -->
+                    <div id="exp2-step3" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">唾液中的淀粉酶需要时间分解淀粉，请等待反应进行。</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp2-reactionBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp2-reactionBread" class="bread"></div>
+                                <div id="exp2-reactionLiquid" class="liquid"></div>
+                            </div>
+                            
+                            <div id="exp2-loading" class="loading-text text-primary font-bold text-2xl opacity-100 transition-opacity duration-10000">十分钟</div>
+                            
+                            <p id="exp2-reactionStatus" class="mt-6 text-center text-gray-600">准备开始反应...</p>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp2-step3Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp2-step3Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤4：检验结果 -->
+                    <div id="exp2-step4" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">滴加碘液检验淀粉是否被消化：</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp2-resultBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp2-resultBread" class="bread"></div>
+                                <div id="exp2-resultLiquid" class="liquid"></div>
+                                <div id="exp2-pipette" class="pipette hidden" style="width: 8px; height: 80px; top: -64px; left: 36px;"></div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center">
+                                <button id="exp2-addIodineBtn" class="px-6 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent/90 transition-all-300 mb-4">
+                                    <i class="fa fa-flask mr-2"></i>
+                                    滴加碘液
+                                </button>
+                                
+                                <p id="exp2-resultStatus" class="text-center text-gray-600">点击上方按钮滴加碘液...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp2-step4Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp2-viewResultBtn" class="px-4 py-2 bg-secondary text-white rounded-lg font-medium hover:bg-secondary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                查看结果
+                                <i class="fa fa-check ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实验3 -->
+            <div class="experiment-card bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-primary text-white p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">实验 C</h3>
+                        <div id="exp3-status" class="px-2 py-1 bg-white/20 rounded-full text-xs font-medium">
+                            准备中
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- 步骤指示器 -->
+                    <div class="step-indicator mb-6">
+                        <div class="step active" data-step="1">
+                            <div>1</div>
+                            <span>准备材料</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div>2</div>
+                            <span>添加液体</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div>3</div>
+                            <span>等待反应</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div>4</div>
+                            <span>检验结果</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤1：选择馒头类型 -->
+                    <div id="exp3-step1" class="step-content">
+                        <p class="mb-6 text-gray-700 text-center">请选择馒头的处理方式：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="whole" data-experiment="3">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-whole"></div>
+                                </div>
+                                <p class="text-center font-medium">整块馒头</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="bread" data-option="crushed" data-experiment="3">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div class="bread bread-crushed"></div>
+                                </div>
+                                <p class="text-center font-medium">切碎馒头</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="exp3-step1Next" class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤2：添加液体 -->
+                    <div id="exp3-step2" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">请选择要添加的液体：</p>
+                        
+                        <div class="flex flex-wrap gap-6 justify-center mb-8">
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="water" data-experiment="3">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp3-previewBeaker2-water" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp3-previewBread2-water" class="bread"></div>
+                                        <div class="liquid liquid-water"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加清水</p>
+                            </div>
+                            
+                            <div class="material-option cursor-pointer border-2 border-transparent hover:border-primary rounded-lg p-4 transition-all-300" data-type="liquid" data-option="saliva" data-experiment="3">
+                                <div class="beaker mx-auto mb-4" style="width: 80px; height: 96px;">
+                                    <div id="exp3-previewBeaker2-saliva" class="beaker mx-auto mb-4" style="width: 80px; height: 96px; opacity: 0.5;">
+                                        <div id="exp3-previewBread2-saliva" class="bread"></div>
+                                        <div class="liquid liquid-saliva"></div>
+                                    </div>
+                                </div>
+                                <p class="text-center font-medium">添加唾液</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp3-step2Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp3-step2Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤3：等待反应 -->
+                    <div id="exp3-step3" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">唾液中的淀粉酶需要时间分解淀粉，请等待反应进行。</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp3-reactionBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp3-reactionBread" class="bread"></div>
+                                <div id="exp3-reactionLiquid" class="liquid"></div>
+                            </div>
+                            
+                            <div id="exp3-loading" class="loading-text text-primary font-bold text-2xl opacity-100 transition-opacity duration-10000">十分钟</div>
+                            
+                            <p id="exp3-reactionStatus" class="mt-6 text-center text-gray-600">准备开始反应...</p>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp3-step3Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp3-step3Next" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                下一步
+                                <i class="fa fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤4：检验结果 -->
+                    <div id="exp3-step4" class="step-content hidden">
+                        <p class="mb-6 text-gray-700 text-center">滴加碘液检验淀粉是否被消化：</p>
+                        
+                        <div class="flex flex-col items-center mb-8">
+                            <div id="exp3-resultBeaker" class="beaker mx-auto mb-6 relative" style="width: 80px; height: 96px;">
+                                <div id="exp3-resultBread" class="bread"></div>
+                                <div id="exp3-resultLiquid" class="liquid"></div>
+                                <div id="exp3-pipette" class="pipette hidden" style="width: 8px; height: 80px; top: -64px; left: 36px;"></div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center">
+                                <button id="exp3-addIodineBtn" class="px-6 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent/90 transition-all-300 mb-4">
+                                    <i class="fa fa-flask mr-2"></i>
+                                    滴加碘液
+                                </button>
+                                
+                                <p id="exp3-resultStatus" class="text-center text-gray-600">点击上方按钮滴加碘液...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button id="exp3-step4Prev" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                                <i class="fa fa-arrow-left mr-1"></i>
+                                上一步
+                            </button>
+                            
+                            <button id="exp3-viewResultBtn" class="px-4 py-2 bg-secondary text-white rounded-lg font-medium hover:bg-secondary/90 transition-all-300 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                                查看结果
+                                <i class="fa fa-check ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 实验记录与结果分析 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 实验记录 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 glass">
+                <h2 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <i class="fa fa-clipboard mr-2"></i>
+                    实验记录
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 实验1记录 -->
+                    <div>
+                        <h3 class="font-semibold text-lg mb-3 text-primary flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-2 text-xs">1</span>
+                            实验 A
+                        </h3>
+                        <div id="exp1-experimentRecord" class="bg-gray-50 p-4 rounded-lg min-h-[200px] text-sm">
+                            <p class="text-gray-500 italic text-center">请完成实验步骤以记录结果</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 实验2记录 -->
+                    <div>
+                        <h3 class="font-semibold text-lg mb-3 text-primary flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-2 text-xs">2</span>
+                            实验 B
+                        </h3>
+                        <div id="exp2-experimentRecord" class="bg-gray-50 p-4 rounded-lg min-h-[200px] text-sm">
+                            <p class="text-gray-500 italic text-center">请完成实验步骤以记录结果</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 实验3记录 -->
+                    <div>
+                        <h3 class="font-semibold text-lg mb-3 text-primary flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-2 text-xs">3</span>
+                            实验 C
+                        </h3>
+                        <div id="exp3-experimentRecord" class="bg-gray-50 p-4 rounded-lg min-h-[200px] text-sm">
+                            <p class="text-gray-500 italic text-center">请完成实验步骤以记录结果</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 结果分析 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 glass">
+                <h2 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <i class="fa fa-bar-chart mr-2"></i>
+                    综合结果分析
+                </h2>
+                
+                <div id="resultAnalysis" class="bg-green-50 p-6 rounded-lg border border-green-100">
+                    <div id="resultContent">
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fa fa-flask text-primary text-2xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-center text-gray-600">
+                            请完成至少一个实验以查看结果分析
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 帮助模态框 -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-primary">实验帮助</h2>
+                <button id="closeHelpBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <h3 class="font-semibold text-xl mb-3">实验目的</h3>
+                    <p class="text-gray-700">
+                        探究口腔对食物（馒头/米饭）的消化作用，验证唾液淀粉酶对淀粉的分解效果。
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-xl mb-3">实验步骤</h3>
+                    <ol class="list-decimal pl-6 text-gray-700 space-y-3">
+                        <li class="flex items-start gap-2">
+                            <span class="font-medium">准备材料：</span>
+                            <span>选择馒头的处理方式（整块或切碎）</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="font-medium">添加液体：</span>
+                            <span>选择添加清水或唾液</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="font-medium">等待反应：</span>
+                            <span>等待10分钟让反应充分进行（实际只需10秒）</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="font-medium">检验结果：</span>
+                            <span>滴加碘液检验淀粉是否被消化</span>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-xl mb-3">实验原理</h3>
+                    <p class="text-gray-700 mb-4">
+                        馒头的主要成分是淀粉。唾液中含有淀粉酶，可以将淀粉分解为麦芽糖。淀粉遇碘会变蓝色，而麦芽糖不会。通过这个特性，我们可以用碘液来检验淀粉是否被消化。
+                    </p>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-semibold text-blue-800 mb-2">关键知识点</h4>
+                        <ul class="list-disc pl-5 text-blue-700 space-y-1">
+                            <li>淀粉 + 碘液 → 蓝色</li>
+                            <li>淀粉 + 唾液淀粉酶 → 麦芽糖</li>
+                            <li>麦芽糖 + 碘液 → 不变色</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-xl mb-3">实验提示</h3>
+                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                        <ul class="list-disc pl-5 text-yellow-700 space-y-2">
+                            <li>可以同时进行三个不同的实验进行对比</li>
+                            <li>切碎的馒头与唾液接触面积更大，消化效果更好</li>
+                            <li>反应时间显示为10分钟，但实际只需等待10秒</li>
+                            <li>完成实验后可以在结果分析区查看综合分析</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button id="closeHelpBtn2" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果模态框 -->
+    <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-primary">实验结果</h2>
+                <button id="closeResultBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="resultModalContent">
+                <!-- 结果内容将通过JavaScript动态填充 -->
+            </div>
+            
+            <div class="mt-8 flex justify-between">
+                <button id="newExperimentBtn" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all-300">
+                    <i class="fa fa-refresh mr-2"></i>
+                    重新实验
+                </button>
+                <button id="closeResultBtn2" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all-300">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        const experiments = [
+            {
+                id: 1,
+                breadType: null,
+                liquidType: null,
+                reactionTime: 0,
+                resultColor: null,
+                status: '准备中',
+                currentStep: 1,
+                timerInterval: null,
+                reactionInProgress: false
+            },
+            {
+                id: 2,
+                breadType: null,
+                liquidType: null,
+                reactionTime: 0,
+                resultColor: null,
+                status: '准备中',
+                currentStep: 1,
+                timerInterval: null,
+                reactionInProgress: false
+            },
+            {
+                id: 3,
+                breadType: null,
+                liquidType: null,
+                reactionTime: 0,
+                resultColor: null,
+                status: '准备中',
+                currentStep: 1,
+                timerInterval: null,
+                reactionInProgress: false
+            }
+        ];
+        
+        // DOM元素
+        const helpBtn = document.getElementById('helpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpBtn = document.getElementById('closeHelpBtn');
+        const closeHelpBtn2 = document.getElementById('closeHelpBtn2');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultModal = document.getElementById('resultModal');
+        const closeResultBtn = document.getElementById('closeResultBtn');
+        const closeResultBtn2 = document.getElementById('closeResultBtn2');
+        const newExperimentBtn = document.getElementById('newExperimentBtn');
+        
+        // 帮助模态框
+        helpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+        });
+        
+        closeHelpBtn.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+        });
+        
+        closeHelpBtn2.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+        });
+        
+        // 结果模态框
+        closeResultBtn.addEventListener('click', () => {
+            resultModal.classList.add('hidden');
+        });
+        
+        closeResultBtn2.addEventListener('click', () => {
+            resultModal.classList.add('hidden');
+        });
+        
+        newExperimentBtn.addEventListener('click', () => {
+            resetAllExperiments();
+            resultModal.classList.add('hidden');
+        });
+        
+        // 重置所有实验
+        resetBtn.addEventListener('click', () => {
+            if (confirm('确定要重置所有实验吗？')) {
+                resetAllExperiments();
+            }
+        });
+        
+        function resetAllExperiments() {
+            experiments.forEach((exp, index) => {
+                resetExperiment(index + 1);
+            });
+            
+            // 重置结果分析
+            document.getElementById('resultContent').innerHTML = `
+                <div class="flex items-center justify-center mb-6">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fa fa-flask text-primary text-2xl"></i>
+                    </div>
+                </div>
+                <p class="text-center text-gray-600">
+                    请完成至少一个实验以查看结果分析
+                </p>
+            `;
+        }
+        
+        function resetExperiment(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            // 重置数据
+            exp.breadType = null;
+            exp.liquidType = null;
+            exp.reactionTime = 0;
+            exp.resultColor = null;
+            exp.status = '准备中';
+            exp.currentStep = 1;
+            exp.reactionInProgress = false;
+            
+            // 重置计时器
+            if (exp.timerInterval) {
+                clearInterval(exp.timerInterval);
+                exp.timerInterval = null;
+            }
+            
+            // 更新状态显示
+            document.getElementById(`exp${experimentId}-status`).textContent = '准备中';
+            document.getElementById(`exp${experimentId}-status`).className = 'px-2 py-1 bg-white/20 rounded-full text-xs font-medium';
+            
+            // 重置UI
+            goToStep(experimentId, 1);
+            
+            // 重置材料选择
+            document.querySelectorAll(`.material-option[data-experiment="${experimentId}"]`).forEach(option => {
+                option.classList.remove('border-primary', 'bg-blue-50');
+                option.classList.add('border-transparent');
+            });
+            
+            // 重置按钮状态
+            document.getElementById(`exp${experimentId}-step1Next`).disabled = true;
+            document.getElementById(`exp${experimentId}-step2Next`).disabled = true;
+            document.getElementById(`exp${experimentId}-step3Next`).disabled = true;
+            document.getElementById(`exp${experimentId}-viewResultBtn`).disabled = true;
+            
+            // 重置实验记录
+            document.getElementById(`exp${experimentId}-experimentRecord`).innerHTML = '<p class="text-gray-500 italic text-center">请完成实验步骤以记录结果</p>';
+            
+            // 重置预览
+            const previewBeaker2Water = document.getElementById(`exp${experimentId}-previewBeaker2-water`);
+            const previewBeaker2Saliva = document.getElementById(`exp${experimentId}-previewBeaker2-saliva`);
+            const previewBread2Water = document.getElementById(`exp${experimentId}-previewBread2-water`);
+            const previewBread2Saliva = document.getElementById(`exp${experimentId}-previewBread2-saliva`);
+            
+            if (previewBeaker2Water) previewBeaker2Water.style.opacity = '0.5';
+            if (previewBeaker2Saliva) previewBeaker2Saliva.style.opacity = '0.5';
+            if (previewBread2Water) previewBread2Water.className = 'bread';
+            if (previewBread2Saliva) previewBread2Saliva.className = 'bread';
+            
+            // 重置反应容器
+            const reactionBread = document.getElementById(`exp${experimentId}-reactionBread`);
+            const reactionLiquid = document.getElementById(`exp${experimentId}-reactionLiquid`);
+            const resultBread = document.getElementById(`exp${experimentId}-resultBread`);
+            const resultLiquid = document.getElementById(`exp${experimentId}-resultLiquid`);
+            const pipette = document.getElementById(`exp${experimentId}-pipette`);
+            
+            if (reactionBread) reactionBread.className = 'bread';
+            if (reactionLiquid) reactionLiquid.className = 'liquid';
+            if (resultBread) resultBread.className = 'bread';
+            if (resultLiquid) resultLiquid.className = 'liquid';
+            if (pipette) pipette.classList.add('hidden');
+            
+            // 重置状态文本
+            const reactionStatus = document.getElementById(`exp${experimentId}-reactionStatus`);
+            const resultStatus = document.getElementById(`exp${experimentId}-resultStatus`);
+            const loading = document.getElementById(`exp${experimentId}-loading`);
+            
+            if (reactionStatus) reactionStatus.textContent = '准备开始反应...';
+            if (resultStatus) resultStatus.textContent = '点击上方按钮滴加碘液...';
+            if (loading) {
+                loading.style.opacity = '1';
+                loading.classList.add('loading-text');
+            }
+        }
+        
+        // 步骤导航
+        function goToStep(experimentId, stepNumber) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            // 更新当前步骤
+            exp.currentStep = stepNumber;
+            
+            // 隐藏所有步骤内容
+            document.querySelectorAll(`#exp${experimentId} .step-content`).forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // 显示当前步骤内容
+            document.getElementById(`exp${experimentId}-step${stepNumber}`).classList.remove('hidden');
+            
+            // 更新步骤指示器
+            document.querySelectorAll(`#exp${experimentId} .step`).forEach((step, index) => {
+                const stepNum = index + 1;
+                
+                if (stepNum < stepNumber) {
+                    // 已完成的步骤
+                    step.classList.add('active');
+                    step.querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
+                    step.querySelector('div').classList.add('bg-green-500', 'text-white');
+                    step.querySelector('span').classList.remove('text-gray-600');
+                    step.querySelector('span').classList.add('text-green-500', 'font-medium');
+                } else if (stepNum === stepNumber) {
+                    // 当前步骤
+                    step.classList.add('active');
+                    step.querySelector('div').classList.remove('bg-gray-300', 'text-gray-600', 'bg-green-500');
+                    step.querySelector('div').classList.add('bg-primary', 'text-white');
+                    step.querySelector('span').classList.remove('text-gray-600', 'text-green-500');
+                    step.querySelector('span').classList.add('text-primary', 'font-medium');
+                } else {
+                    // 未完成的步骤
+                    step.classList.remove('active');
+                    step.querySelector('div').classList.remove('bg-primary', 'text-white', 'bg-green-500');
+                    step.querySelector('div').classList.add('bg-gray-300', 'text-gray-600');
+                    step.querySelector('span').classList.remove('text-primary', 'font-medium', 'text-green-500');
+                    step.querySelector('span').classList.add('text-gray-600');
+                }
+            });
+            
+            // 更新实验状态
+            updateExperimentStatus(experimentId);
+        }
+        
+        // 更新实验状态
+        function updateExperimentStatus(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            const statusElement = document.getElementById(`exp${experimentId}-status`);
+            
+            let statusText = '准备中';
+            let statusClass = 'bg-white/20';
+            
+            if (exp.currentStep === 4 && exp.resultColor !== null) {
+                statusText = '已完成';
+                statusClass = 'bg-green-500/20 text-green-500';
+            } else if (exp.currentStep === 3 && exp.reactionInProgress) {
+                statusText = '反应中';
+                statusClass = 'bg-blue-500/20 text-blue-500';
+            } else if (exp.currentStep > 1) {
+                statusText = '进行中';
+                statusClass = 'bg-yellow-500/20 text-yellow-500';
+            }
+            
+            exp.status = statusText;
+            statusElement.textContent = statusText;
+            statusElement.className = `px-2 py-1 ${statusClass} rounded-full text-xs font-medium`;
+            
+            // 更新结果分析
+            updateResultAnalysis();
+        }
+        
+        // 更新结果分析
+        function updateResultAnalysis() {
+            const completedExperiments = experiments.filter(exp => exp.resultColor !== null);
+            
+            if (completedExperiments.length === 0) {
+                document.getElementById('resultContent').innerHTML = `
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fa fa-flask text-primary text-2xl"></i>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">
+                        请完成至少一个实验以查看结果分析
+                    </p>
+                `;
+                return;
+            }
+            
+            let analysisHTML = `
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-primary mb-4">实验结果汇总</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            `;
+            
+            completedExperiments.forEach(exp => {
+                const experimentLetter = String.fromCharCode(64 + exp.id);
+                const breadTypeText = exp.breadType === 'whole' ? '整块馒头' : '切碎馒头';
+                const liquidTypeText = exp.liquidType === 'water' ? '清水' : '唾液';
+                const resultText = exp.resultColor === 'iodine' ? '变蓝' : '不变蓝';
+                const resultClass = exp.resultColor === 'iodine' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
+                const resultIcon = exp.resultColor === 'iodine' ? 'fa-times-circle' : 'fa-check-circle';
+                
+                analysisHTML += `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-semibold">实验 ${experimentLetter}</h4>
+                            <span class="px-2 py-1 ${resultClass} rounded-full text-xs font-medium">
+                                ${resultText}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <div>馒头：${breadTypeText}</div>
+                            <div>液体：${liquidTypeText}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            analysisHTML += `
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-primary mb-4">实验结论</h3>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <ul class="list-disc pl-5 text-green-800 space-y-2">
+            `;
+            
+            // 分析实验结果
+            const waterExperiments = completedExperiments.filter(exp => exp.liquidType === 'water');
+            const salivaExperiments = completedExperiments.filter(exp => exp.liquidType === 'saliva');
+            
+            if (waterExperiments.length > 0) {
+                const allWaterExperimentsBlue = waterExperiments.every(exp => exp.resultColor === 'iodine');
+                if (allWaterExperimentsBlue) {
+                    analysisHTML += `
+                        <li>添加清水的实验组中，淀粉未被消化，滴加碘液后<span class="font-semibold">全部变蓝</span>，说明清水不能分解淀粉。</li>
+                    `;
+                }
+            }
+            
+            if (salivaExperiments.length > 0) {
+                const wholeBreadExperiments = salivaExperiments.filter(exp => exp.breadType === 'whole');
+                const crushedBreadExperiments = salivaExperiments.filter(exp => exp.breadType === 'crushed');
+                
+                if (wholeBreadExperiments.length > 0) {
+                    const wholeBreadResults = wholeBreadExperiments.map(exp => exp.resultColor);
+                    if (wholeBreadResults.includes('iodine')) {
+                        analysisHTML += `
+                            <li>添加唾液+整块馒头的实验组中，部分淀粉未被完全消化，滴加碘液后<span class="font-semibold">变蓝</span>。</li>
+                        `;
+                    }
+                }
+                
+                if (crushedBreadExperiments.length > 0) {
+                    const crushedBreadResults = crushedBreadExperiments.map(exp => exp.resultColor);
+                    if (crushedBreadResults.includes('no-color')) {
+                        analysisHTML += `
+                            <li>添加唾液+切碎馒头的实验组中，淀粉被充分消化，滴加碘液后<span class="font-semibold">不变蓝</span>。</li>
+                        `;
+                    }
+                }
+                
+                if (wholeBreadExperiments.length > 0 && crushedBreadExperiments.length > 0) {
+                    analysisHTML += `
+                        <li><span class="font-semibold">对比结论：</span>切碎的馒头与唾液接触面积更大，消化效果更好，说明食物的物理消化（咀嚼）有助于化学消化（酶的作用）。</li>
+                    `;
+                }
+            }
+            
+            analysisHTML += `
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-4">实验意义</h3>
+                    <p class="text-gray-700">
+                        本实验验证了唾液淀粉酶对淀粉的消化作用，以及食物物理消化对化学消化的促进作用。这解释了为什么我们在进食时应该充分咀嚼食物，
+                        这样可以增大食物与消化酶的接触面积，提高消化效率。同时也说明了唾液在淀粉类食物消化过程中的重要作用。
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('resultContent').innerHTML = analysisHTML;
+        }
+        
+        // 初始化实验事件监听
+        function initExperimentEvents() {
+            experiments.forEach((exp, index) => {
+                const experimentId = index + 1;
+                
+                // 步骤1：选择馒头类型
+                document.querySelectorAll(`.material-option[data-type="bread"][data-experiment="${experimentId}"]`).forEach(option => {
+                    option.addEventListener('click', () => {
+                        const choice = option.dataset.option;
+                        
+                        // 取消同类型其他选项的选中状态
+                        document.querySelectorAll(`.material-option[data-type="bread"][data-experiment="${experimentId}"]`).forEach(opt => {
+                            opt.classList.remove('border-primary', 'bg-blue-50');
+                            opt.classList.add('border-transparent');
+                        });
+                        
+                        // 选中当前选项
+                        option.classList.remove('border-transparent');
+                        option.classList.add('border-primary', 'bg-blue-50');
+                        
+                        // 保存选择
+                        exp.breadType = choice;
+                        
+                        // 更新预览
+                        const previewBread2Water = document.getElementById(`exp${experimentId}-previewBread2-water`);
+                        const previewBread2Saliva = document.getElementById(`exp${experimentId}-previewBread2-saliva`);
+                        
+                        if (previewBread2Water) previewBread2Water.className = `bread bread-${choice}`;
+                        if (previewBread2Saliva) previewBread2Saliva.className = `bread bread-${choice}`;
+                        
+                        // 启用下一步按钮
+                        document.getElementById(`exp${experimentId}-step1Next`).disabled = false;
+                        
+                        // 更新实验记录
+                        updateExperimentRecord(experimentId, `选择了${choice === 'whole' ? '整块' : '切碎'}馒头`);
+                    });
+                });
+                
+                // 步骤1 -> 步骤2
+                document.getElementById(`exp${experimentId}-step1Next`).addEventListener('click', () => {
+                    // 更新实验记录
+                    updateExperimentRecord(experimentId, `开始准备添加液体...`);
+                    
+                    goToStep(experimentId, 2);
+                });
+                
+                // 步骤2 -> 步骤1
+                document.getElementById(`exp${experimentId}-step2Prev`).addEventListener('click', () => {
+                    goToStep(experimentId, 1);
+                });
+                
+                // 步骤2：选择液体类型
+                document.querySelectorAll(`.material-option[data-type="liquid"][data-experiment="${experimentId}"]`).forEach(option => {
+                    option.addEventListener('click', () => {
+                        const choice = option.dataset.option;
+                        
+                        // 取消同类型其他选项的选中状态
+                        document.querySelectorAll(`.material-option[data-type="liquid"][data-experiment="${experimentId}"]`).forEach(opt => {
+                            opt.classList.remove('border-primary', 'bg-blue-50');
+                            opt.classList.add('border-transparent');
+                        });
+                        
+                        // 选中当前选项
+                        option.classList.remove('border-transparent');
+                        option.classList.add('border-primary', 'bg-blue-50');
+                        
+                        // 保存选择
+                        exp.liquidType = choice;
+                        
+                        // 更新预览
+                        const previewBeaker2Water = document.getElementById(`exp${experimentId}-previewBeaker2-water`);
+                        const previewBeaker2Saliva = document.getElementById(`exp${experimentId}-previewBeaker2-saliva`);
+                        
+                        if (previewBeaker2Water) previewBeaker2Water.style.opacity = choice === 'water' ? '1' : '0.5';
+                        if (previewBeaker2Saliva) previewBeaker2Saliva.style.opacity = choice === 'saliva' ? '1' : '0.5';
+                        
+                        // 启用下一步按钮
+                        document.getElementById(`exp${experimentId}-step2Next`).disabled = false;
+                        
+                        // 更新实验记录
+                        updateExperimentRecord(experimentId, `选择了添加${choice === 'water' ? '清水' : '唾液'}`);
+                    });
+                });
+                
+                // 步骤2 -> 步骤3
+                document.getElementById(`exp${experimentId}-step2Next`).addEventListener('click', () => {
+                    // 更新实验记录
+                    updateExperimentRecord(experimentId, `添加了${exp.liquidType === 'water' ? '清水' : '唾液'}`);
+                    
+                    // 更新反应容器
+                    const reactionBread = document.getElementById(`exp${experimentId}-reactionBread`);
+                    const reactionLiquid = document.getElementById(`exp${experimentId}-reactionLiquid`);
+                    const resultBread = document.getElementById(`exp${experimentId}-resultBread`);
+                    const resultLiquid = document.getElementById(`exp${experimentId}-resultLiquid`);
+                    
+                    if (reactionBread) reactionBread.className = `bread bread-${exp.breadType}`;
+                    if (reactionLiquid) reactionLiquid.className = `liquid liquid-${exp.liquidType}`;
+                    if (resultBread) resultBread.className = `bread bread-${exp.breadType}`;
+                    if (resultLiquid) resultLiquid.className = `liquid liquid-${exp.liquidType}`;
+                    
+                    goToStep(experimentId, 3);
+                    
+                    // 自动开始反应
+                    startReaction(experimentId);
+                });
+                
+                // 步骤3 -> 步骤2
+                document.getElementById(`exp${experimentId}-step3Prev`).addEventListener('click', () => {
+                    // 停止反应
+                    if (exp.timerInterval) {
+                        clearInterval(exp.timerInterval);
+                        exp.timerInterval = null;
+                    }
+                    exp.reactionInProgress = false;
+                    
+                    // 重置加载文本
+                    const loading = document.getElementById(`exp${experimentId}-loading`);
+                    if (loading) {
+                        loading.style.opacity = '1';
+                        loading.classList.add('loading-text');
+                    }
+                    
+                    goToStep(experimentId, 2);
+                });
+                
+                // 步骤3 -> 步骤4
+                document.getElementById(`exp${experimentId}-step3Next`).addEventListener('click', () => {
+                    // 停止反应
+                    if (exp.timerInterval) {
+                        clearInterval(exp.timerInterval);
+                        exp.timerInterval = null;
+                    }
+                    exp.reactionInProgress = false;
+                    
+                    // 更新实验记录
+                    updateExperimentRecord(experimentId, `反应完成，耗时10分钟`);
+                    
+                    goToStep(experimentId, 4);
+                });
+                
+                // 步骤4 -> 步骤3
+                document.getElementById(`exp${experimentId}-step4Prev`).addEventListener('click', () => {
+                    goToStep(experimentId, 3);
+                });
+                
+                // 滴加碘液
+                document.getElementById(`exp${experimentId}-addIodineBtn`).addEventListener('click', () => {
+                    // 显示滴管
+                    const pipette = document.getElementById(`exp${experimentId}-pipette`);
+                    if (pipette) pipette.classList.remove('hidden');
+                    
+                    // 更新状态
+                    const resultStatus = document.getElementById(`exp${experimentId}-resultStatus`);
+                    if (resultStatus) resultStatus.textContent = '正在滴加碘液...';
+                    
+                    // 模拟滴加过程
+                    setTimeout(() => {
+                        // 隐藏滴管
+                        if (pipette) pipette.classList.add('hidden');
+                        
+                        // 根据实验条件确定结果
+                        determineResult(experimentId);
+                        
+                        // 更新结果容器
+                        const resultLiquid = document.getElementById(`exp${experimentId}-resultLiquid`);
+                        if (resultLiquid) resultLiquid.className = `liquid liquid-${exp.resultColor}`;
+                        
+                        // 更新状态
+                        if (resultStatus) {
+                            if (exp.resultColor === 'iodine') {
+                                resultStatus.innerHTML = '<span class="text-blue-600 font-medium">溶液变蓝！</span> 说明淀粉未被消化';
+                            } else {
+                                resultStatus.innerHTML = '<span class="text-green-600 font-medium">溶液不变蓝！</span> 说明淀粉已被消化';
+                            }
+                        }
+                        
+                        // 更新实验记录
+                        updateExperimentRecord(experimentId, `滴加碘液，结果：${exp.resultColor === 'iodine' ? '溶液变蓝（淀粉未消化）' : '溶液不变蓝（淀粉已消化）'}`);
+                        
+                        // 启用查看结果按钮
+                        document.getElementById(`exp${experimentId}-viewResultBtn`).disabled = false;
+                        
+                        // 更新实验状态
+                        updateExperimentStatus(experimentId);
+                    }, 1500);
+                });
+                
+                // 查看结果
+                document.getElementById(`exp${experimentId}-viewResultBtn`).addEventListener('click', () => {
+                    showExperimentResult(experimentId);
+                });
+            });
+        }
+        
+        // 开始反应
+        function startReaction(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            if (exp.reactionInProgress) return;
+            
+            exp.reactionInProgress = true;
+            exp.reactionTime = 0;
+            
+            // 更新状态
+            const reactionStatus = document.getElementById(`exp${experimentId}-reactionStatus`);
+            if (reactionStatus) reactionStatus.textContent = '反应进行中...';
+            
+            // 开始加载动画（10秒快进）
+            const loading = document.getElementById(`exp${experimentId}-loading`);
+            if (loading) {
+                loading.style.opacity = '1';
+                loading.classList.add('loading-text');
+                
+                // 10秒后完成反应
+                setTimeout(() => {
+                    if (exp.reactionInProgress) {
+                        exp.reactionInProgress = false;
+                        
+                        if (reactionStatus) reactionStatus.textContent = '反应完成！';
+                        document.getElementById(`exp${experimentId}-step3Next`).disabled = false;
+                        
+                        // 更新实验状态
+                        updateExperimentStatus(experimentId);
+                        
+                        // 更新馒头状态
+                        updateBreadState(experimentId);
+                    }
+                }, 10000);
+            }
+            
+            // 设置计时器（用于更新状态文本）
+            let statusUpdateInterval = setInterval(() => {
+                exp.reactionTime++;
+                
+                // 更新状态文本
+                if (reactionStatus) {
+                    if (exp.reactionTime === 3) {
+                        reactionStatus.textContent = '反应进行中...淀粉开始分解';
+                    } else if (exp.reactionTime === 7) {
+                        reactionStatus.textContent = '反应进行中...淀粉分解中';
+                    }
+                }
+                
+                // 完成反应
+                if (exp.reactionTime >= 10) {
+                    clearInterval(statusUpdateInterval);
+                }
+            }, 1000);
+        }
+        
+        // 更新馒头状态
+        function updateBreadState(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            const reactionBread = document.getElementById(`exp${experimentId}-reactionBread`);
+            const resultBread = document.getElementById(`exp${experimentId}-resultBread`);
+            
+            if (exp.liquidType === 'saliva') {
+                if (exp.breadType === 'whole') {
+                    // 整块馒头在唾液中体积减小
+                    if (reactionBread) reactionBread.classList.add('bread-shrink');
+                    if (resultBread) resultBread.classList.add('bread-shrink');
+                } else {
+                    // 碎馒头在唾液中消失
+                    if (reactionBread) reactionBread.classList.add('bread-disappear');
+                    if (resultBread) resultBread.classList.add('bread-disappear');
+                }
+            }
+            // 清水中馒头体积不变
+        }
+        
+        // 确定实验结果
+        function determineResult(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            // 实验结果逻辑：
+            // 1. 添加清水：淀粉不会被消化，所以会变蓝
+            // 2. 添加唾液：
+            //    a. 整块馒头：淀粉部分被消化，可能会变蓝但颜色较浅
+            //    b. 切碎馒头：淀粉大部分被消化，不会变蓝
+            
+            if (exp.liquidType === 'water') {
+                // 添加清水，淀粉未被消化，变蓝
+                exp.resultColor = 'iodine';
+            } else {
+                // 添加唾液
+                if (exp.breadType === 'whole') {
+                    // 整块馒头，部分淀粉未被消化，变蓝但颜色较浅
+                    // 为了简化，这里设置为变蓝
+                    exp.resultColor = 'iodine';
+                } else {
+                    // 切碎馒头，淀粉大部分被消化，不变蓝
+                    exp.resultColor = 'no-color';
+                }
+            }
+        }
+        
+        // 更新实验记录
+        function updateExperimentRecord(experimentId, action) {
+            const recordElement = document.getElementById(`exp${experimentId}-experimentRecord`);
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const newRecord = document.createElement('div');
+            newRecord.className = 'flex justify-between items-center py-2 border-b border-gray-100 last:border-0 animate-fade-in';
+            newRecord.innerHTML = `
+                <span class="text-gray-700">${action}</span>
+                <span class="text-gray-500 text-xs">${timestamp}</span>
+            `;
+            
+            // 如果是第一条记录，清空现有内容
+            if (recordElement.querySelector('.text-gray-500.italic')) {
+                recordElement.innerHTML = '';
+            }
+            
+            recordElement.appendChild(newRecord);
+            
+            // 滚动到底部
+            recordElement.scrollTop = recordElement.scrollHeight;
+        }
+        
+        // 显示实验结果
+        function showExperimentResult(experimentId) {
+            const expIndex = experimentId - 1;
+            const exp = experiments[expIndex];
+            
+            const experimentLetter = String.fromCharCode(64 + exp.id);
+            const breadTypeText = exp.breadType === 'whole' ? '整块馒头' : '切碎馒头';
+            const liquidTypeText = exp.liquidType === 'water' ? '清水' : '唾液';
+            const resultText = exp.resultColor === 'iodine' ? '变蓝' : '不变蓝';
+            const resultClass = exp.resultColor === 'iodine' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
+            const resultIcon = exp.resultColor === 'iodine' ? 'fa-times-circle' : 'fa-check-circle';
+            const resultExplanation = exp.resultColor === 'iodine' 
+                ? '淀粉未被消化，遇碘变蓝' 
+                : '淀粉已被唾液淀粉酶分解，遇碘不变蓝';
+            
+            const resultHTML = `
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 rounded-full ${resultClass.replace('text-', 'bg-').replace('-800', '-500')} flex items-center justify-center mx-auto mb-4">
+                        <i class="fa ${resultIcon} text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold ${resultClass.split(' ')[1]}">实验 ${experimentLetter} 结果</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h4 class="font-semibold text-lg mb-4 text-primary">实验条件</h4>
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+                                        <i class="fa fa-cutlery text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">馒头处理方式</div>
+                                        <div class="font-medium">${breadTypeText}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                                        <i class="fa fa-tint text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">添加液体</div>
+                                        <div class="font-medium">${liquidTypeText}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                        <i class="fa fa-clock-o text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-500">反应时间</div>
+                                        <div class="font-medium">10分钟</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-lg mb-4 text-primary">实验结果</h4>
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-center mb-6">
+                                <div class="beaker" style="width: 100px; height: 120px;">
+                                    <div class="bread bread-${exp.breadType} ${exp.liquidType === 'saliva' ? (exp.breadType === 'whole' ? 'bread-shrink' : 'bread-disappear') : ''}"></div>
+                                    <div class="liquid liquid-${exp.resultColor}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mb-4">
+                                <span class="px-4 py-2 ${resultClass} rounded-full font-medium">
+                                    碘液检验：${resultText}
+                                </span>
+                            </div>
+                            
+                            <p class="text-gray-700 text-center">
+                                ${resultExplanation}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                    <h4 class="font-semibold text-lg mb-3 text-blue-800">实验结论</h4>
+                    <p class="text-blue-700">
+                        ${exp.liquidType === 'water' 
+                            ? '添加清水的实验组中，淀粉未被消化，滴加碘液后变蓝。这说明清水不能分解淀粉。' 
+                            : exp.breadType === 'whole'
+                                ? '添加唾液+整块馒头的实验组中，部分淀粉未被完全消化，滴加碘液后变蓝。这说明整块馒头与唾液接触面积较小，消化不够充分。'
+                                : '添加唾液+切碎馒头的实验组中，淀粉被充分消化，滴加碘液后不变蓝。这说明切碎的馒头与唾液接触面积更大，消化效果更好。'}
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('resultModalContent').innerHTML = resultHTML;
+            resultModal.classList.remove('hidden');
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initExperimentEvents();
+            experiments.forEach((exp, index) => {
+                resetExperiment(index + 1);
+            });
+        });
+    </script>
+</body>
 </html>
